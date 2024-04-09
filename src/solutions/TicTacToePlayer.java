@@ -11,7 +11,7 @@ public class TicTacToePlayer {
     public static void main(String[] args) {
         int boardSize = 4;
         Game<char[][], int[]> ticTacToeGame = new TicTacToe(boardSize, TicTacToe.Marks.X);
-        Minimax<char[][], int[]> minimax = new Minimax<>(ticTacToeGame, true, 5);
+        Minimax<char[][], int[]> minimax = new Minimax<>(ticTacToeGame, true);
         char[][] board = new char[boardSize][boardSize];
         boolean isHumanTurn = true;
 
