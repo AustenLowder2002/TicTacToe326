@@ -10,7 +10,7 @@ import static solutions.ConnectFourGame.EMPTY_SLOT;
 public class ConnectFourGame implements Game<ConnectFourBoard, Integer> {
     private static final int ROWS = 6;
     public static final int COLUMNS = 7;
-    private static final int WINNING_LENGTH = 4;
+    private static final int WINNING_LENGTH = 6;
     public static final int EMPTY_SLOT = 0;
     private static final int PLAYER1 = 1;
     private static final int PLAYER2 = 2;
@@ -33,12 +33,21 @@ public class ConnectFourGame implements Game<ConnectFourBoard, Integer> {
 
     @Override
     public List<Integer> actions(ConnectFourBoard state) {
-        return state.getValidMoves();
+        List<Integer> validMoves = new ArrayList<>();
+        for (int col = 0; col < ConnectFourGame.COLUMNS; col++) {
+            validMoves.add(col);
+        }
+        return validMoves;
     }
 
     @Override
     public ConnectFourBoard execute(Integer action, ConnectFourBoard state) {
-        return state.dropDisc(action, state.getCurrentPlayer());
+        state = state.dropDisc(action, state.getCurrentPlayer());
+        // Mark the column as full to prevent further moves
+        state.markColumnFull(action);
+        // Update the current player
+        state.updateCurrentPlayer();
+        return state;
     }
 
     @Override
@@ -135,17 +144,44 @@ class ConnectFourBoard {
         return validMoves;
     }
 
-    public ConnectFourBoard dropDisc(int column, int player) {
-        ConnectFourBoard newBoard = new ConnectFourBoard();
-        for (int row = 5; row >= 0; row--) {
+    public void markColumnFull(int column) {
+        // Find the lowest empty row in the column and mark it as full
+        for (int row = 0; row < 6; row++) {
             if (board[row][column] == EMPTY_SLOT) {
-                newBoard.board[row][column] = player;
+                board[row][column] = currentPlayer; // Mark it as the current player's disc
                 break;
             }
         }
-        newBoard.currentPlayer = 3 - player; // Switch player
+    }
+
+
+
+    public ConnectFourBoard dropDisc(int column, int player) {
+        int row;
+        for (row = 0; row < 6; row++) {
+            if (board[row][column] == EMPTY_SLOT) {
+                break;
+            }
+        }
+        if (row == 0) {
+            // Column is full, return the same board
+            return this;
+        }
+
+        ConnectFourBoard newBoard = new ConnectFourBoard();
+        newBoard.currentPlayer = player;
+        // Copy the existing board state
+        for (int r = 0; r < 6; r++) {
+            for (int c = 0; c < 7; c++) {
+                newBoard.board[r][c] = board[r][c];
+            }
+        }
+        // Place the disc on top of existing ones in the column
+        newBoard.board[row - 1][column] = player;
         return newBoard;
     }
+
+
 
     public void removeDisc(int column) {
         for (int row = 0; row < 6; row++) {
@@ -174,6 +210,10 @@ class ConnectFourBoard {
 
     public int getCurrentPlayer() {
         return currentPlayer;
+    }
+
+    public void updateCurrentPlayer() {
+        currentPlayer = 3 - currentPlayer; // Switch player
     }
 }
 
