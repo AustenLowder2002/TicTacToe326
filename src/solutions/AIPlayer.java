@@ -1,13 +1,23 @@
 package solutions;
 
+import core_algorithms.Minimax;
+import problems.Game;
+
 import java.util.List;
-import java.util.Random;
 
 public class AIPlayer {
+    private final Minimax<ConnectFourBoard, Integer> minimax;
+
+    public AIPlayer(Game<ConnectFourBoard, Integer> game, boolean pruning) {
+        this.minimax = new Minimax<>(game, pruning);
+    }
+
     public int makeMove(ConnectFourBoard board) {
-        // Generate a random valid move
         List<Integer> validMoves = board.getValidMoves();
-        Random random = new Random();
-        return validMoves.get(random.nextInt(validMoves.size()));
+        if (validMoves.isEmpty()) {
+            throw new IllegalStateException("No valid moves available.");
+        }
+        // Use Minimax to find the best move among valid moves
+        return minimax.minimaxSearch(board);
     }
 }

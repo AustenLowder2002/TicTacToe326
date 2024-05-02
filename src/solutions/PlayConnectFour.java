@@ -7,33 +7,33 @@ public class PlayConnectFour {
     public static void main(String[] args) {
         ConnectFourBoard board = new ConnectFourBoard();
         ConnectFourGame game = new ConnectFourGame();
+        boolean usePruning = true; // Or false depending on your preference
+
+        AIPlayer aiPlayer = new AIPlayer(game, usePruning);
         Scanner scanner = new Scanner(System.in);
-        AIPlayer aiPlayer = new AIPlayer();
 
         System.out.println("Welcome to Connect Four!");
 
         while (!game.isTerminal(board)) {
-            // Game loop content remains the same
             System.out.println(boardToString(board));
             int currentPlayer = board.getCurrentPlayer();
-            System.out.println("Player " + currentPlayer + "'s turn");
-
-            List<Integer> validMoves = game.actions(board);
-            System.out.println("Valid moves: " + validMoves);
+            System.out.println(currentPlayer == 1 ? "Player 1's turn" : "AI's turn");
 
             int column;
             if (currentPlayer == 1) {
+                List<Integer> validMoves = game.actions(board);
                 while (true) {
                     System.out.print("Enter column to drop disc (0-6): ");
                     column = scanner.nextInt();
-                    System.out.println(currentPlayer);
                     if (validMoves.contains(column)) {
                         break;
                     }
                     System.out.println("Invalid move! Please try again.");
                 }
             } else { // AI's turn
+                System.out.println("AI is thinking...");
                 column = aiPlayer.makeMove(board);
+                System.out.println("AI chose column " + column);
             }
 
             board = game.execute(column, board);
@@ -44,7 +44,7 @@ public class PlayConnectFour {
         if (utility > 0) {
             System.out.println("Player 1 wins!");
         } else if (utility < 0) {
-            System.out.println("Player 2 wins!");
+            System.out.println("AI wins!");
         } else {
             System.out.println("It's a draw!");
         }
@@ -52,7 +52,7 @@ public class PlayConnectFour {
 
     private static String boardToString(ConnectFourBoard board) {
         StringBuilder sb = new StringBuilder();
-        for (int row = 0; row < 6; row++) {
+        for (int row = 5; row >= 0; row--) { // Iterate in reverse order
             for (int col = 0; col < 7; col++) {
                 sb.append(board.get(row, col) == 0 ? "- " : board.get(row, col) + " ");
             }
@@ -61,4 +61,3 @@ public class PlayConnectFour {
         return sb.toString();
     }
 }
-
