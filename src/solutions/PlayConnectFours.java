@@ -3,7 +3,7 @@ package solutions;
 import java.util.Scanner;
 import java.util.List;
 
-public class PlayConnectFour {
+public class PlayConnectFours {
     public static void main(String[] args) {
         ConnectFourBoard board = new ConnectFourBoard();
         ConnectFourGame game = new ConnectFourGame();

@@ -2,6 +2,7 @@ package solutions;
 
 import core_algorithms.Minimax;
 import problems.Game;
+import solutions.ConnectFourBoard;
 
 import java.util.List;
 
